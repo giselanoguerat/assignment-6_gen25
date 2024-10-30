@@ -71,3 +71,29 @@ data_12
     ## 3 durian     10  19.9
 
 <br>
+
+#### 1.3 Import `https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset3.txt` into R. Watch out for the first few lines, missing values, separators, quotation marks, and deliminaters.
+
+``` r
+data_13 <- read_delim("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset3.txt", skip = 2, na = c("?","Not Available"))
+data_13 |> 
+  mutate(`/Name/`= str_replace_all(`/Name/`,"/","")) |> 
+  clean_names('upper_camel')
+```
+
+    ## # A tibble: 3 × 3
+    ##   Name   Weight Price
+    ##   <chr>   <dbl> <dbl>
+    ## 1 apple       1   2.9
+    ## 2 orange      2  NA  
+    ## 3 durian     NA  19.9
+
+<br>
+
+#### 1.4 Import `https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset4.txt` into R. Watch out for comments, units, and decimal marks (which are `,` in this case).
+
+<br>
+
+#### 1.5 Import `https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset5.txt` into R. Parse the columns properly. As a reminder, you can read about parsing date and time data [here](https://r4ds.had.co.nz/data-import.html#readr-datetimes). Write this imported and parsed data frame into a new csv file named `dataset5_new.csv` in your `problem_sets` folder.
+
+<br>

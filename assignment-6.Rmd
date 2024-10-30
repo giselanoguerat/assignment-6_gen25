@@ -75,4 +75,152 @@ data_13 |>
 
 <br>
 
+## Exercise 2. Weather station
 
+This dataset contains the weather and air quality data collected by a
+weather station in Taiwan. It was obtained from the Environmental
+Protection Administration, Executive Yuan, R.O.C. (Taiwan).
+
+#### 2.1 Variable descriptions
+
+- The text file
+  `https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/2015y_Weather_Station_notes.txt` contains descriptions of different variables collected by the station.
+<br>
+- Import it into R and print it in a table as shown below with `kable()`.
+
+<br>
+```{r, message=FALSE}
+read_delim("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/2015y_Weather_Station_notes.txt", delim = "-") |> 
+  kable()
+```
+
+
+<br>
+`#` indicates invalid value by equipment inspection  
+`*` indicates invalid value by program inspection  
+`x` indicates invalid value by human inspection  
+`NR` indicates no rainfall  
+blank indicates no data
+
+<br>
+
+#### 2.2 Data tidying
+
+- Import
+  `https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/2015y_Weather_Station.csv`
+  into R. As you can see, this dataset is a classic example of untidy
+  data: values of a variable (i.e. hour of the day) are stored as column
+  names; variable names are stored in the `item` column.
+
+- Clean this dataset up and restructure it into a tidy format.
+
+- Parse the `date` variable into date format and parse `hour` into time.
+
+- Turn all invalid values into `NA` and turn `NR` in rainfall into `0`.
+
+- Parse all values into numbers.
+
+- Show the first 6 rows and 10 columns of this cleaned dataset, as shown
+  below, *without* using `kable()`.
+
+*Hints: you don’t have to perform these tasks in the given order; also,
+warning messages are not necessarily signs of trouble.*
+
+<br>
+
+Before cleaning:
+
+```{r, message=FALSE, warning=FALSE}
+data2 <- read_csv("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/2015y_Weather_Station.csv",  na = c("NA")) |> 
+  mutate_all(as.character) |> 
+  mutate(
+    across(everything(), ~ replace(., . == "NR", 0)))
+
+data2 |> 
+  head()
+#col_types = col(.defaults = "c") => import the data
+#mutate(RAINFALL = ifelse(RAINFALL == "NR", 0, RAINFALL) |> 
+#type_convert(col_types = cols(.default = col_double(), date = col_date(), station = col_character(), hour = col_time("%H")))
+```
+
+<br>
+
+After cleaning:
+
+```{r}
+new_data <- data2 |> 
+  pivot_longer(c(`00`:`23`), names_to = "hour") |> 
+  pivot_wider(names_from = item, values_from = value) |> 
+  mutate(
+    hour = paste0(hour,":00"))
+  
+head(new_data)
+```
+
+
+<br>
+
+#### 2.3 Using this cleaned dataset, plot the daily variation in ambient temperature on September 25, 2015, as shown below.
+
+```{r}
+new_data$hour <- factor(new_data$hour)
+new_data |> 
+  select(hour, AMB_TEMP, date) |> 
+  filter(date == "2015-09-25") |> 
+  ggplot(mapping = aes(x = hour, y = AMB_TEMP, group = 1)) +
+  geom_line()
+```
+
+
+<br>
+
+#### 2.4 Plot the daily average ambient temperature throughout the year with a **continuous line**, as shown below.
+
+```{r}
+new_data$date <- factor(new_data$date)
+new_data |> 
+  select(hour,AMB_TEMP,date) |> 
+  ggplot(mapping = aes(x = date, y = AMB_TEMP, group = 1)) +
+  geom_line() 
+```
+
+
+<br>
+
+#### 2.5 Plot the total rainfall per month in a bar chart, as shown below.
+
+*Hint: separating date into three columns might be helpful.*
+
+```{r, warning=FALSE, message=FALSE}
+new_data |> 
+  mutate(
+    month = format(as.Date(date), "%m"),
+    RAINFALL = as.numeric(RAINFALL)) |> 
+  group_by(month) |> 
+  summarise(
+    MonthlyRainfall = sum(RAINFALL, na.rm = T)
+  ) |> 
+  ggplot(mapping = aes(x = month, y = MonthlyRainfall)) +
+  geom_col()
+```
+
+<br>
+
+#### 2.6 Plot the per hour variation in PM2.5 in the first week of September with a **continuous line**, as shown below.
+
+*Hint: uniting the date and hour and parsing the new variable might be
+helpful.*
+
+```{r}
+new_data <- new_data |> 
+  mutate(
+    time = parse_datetime(paste(date, hour), format = "%Y-%m-%d %H:%M"))
+new_data$time <- factor(new_data$time) 
+new_data |> 
+  filter(between(as.Date(time), as.Date("2015-01-01"), as.Date("2015-01-08"))) |> 
+  ggplot(mapping = aes(x = time, y = PM2.5, group = 1)) +
+  geom_line() 
+```
+
+
+<br>

@@ -55,3 +55,19 @@ tibble(a = c(1,2),
     ## 2     2   3.2 orange
 
 <br>
+
+#### 1.2 Import `https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset2.txt` into R. Change the column names into “Name”, “Weight”, “Price”.
+
+``` r
+data_12 <- read_delim("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset2.txt", col_names = c("Name", "Weight", "Price"))
+data_12
+```
+
+    ## # A tibble: 3 × 3
+    ##   Name   Weight Price
+    ##   <chr>   <dbl> <dbl>
+    ## 1 apple       1   2.9
+    ## 2 orange      2   4.9
+    ## 3 durian     10  19.9
+
+<br>

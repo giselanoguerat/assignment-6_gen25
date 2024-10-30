@@ -45,3 +45,12 @@ tibble(a = c(1,2),
 
 
 <br>
+
+#### 1.2 Import `https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset2.txt` into R. Change the column names into “Name”, “Weight”, “Price”.
+
+```{r, message=FALSE}
+data_12 <- read_delim("https://raw.githubusercontent.com/nt246/NTRES-6100-data-science/master/datasets/dataset2.txt", col_names = c("Name", "Weight", "Price"))
+data_12
+```
+
+<br>

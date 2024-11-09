@@ -1,6 +1,6 @@
 assignment-6
 ================
-Gisela Noguera Toffoletti
+Gisela E. Noguera Toffoletti
 
 # Assignment 6: Data import and tidy data
 
